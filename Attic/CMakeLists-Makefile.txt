@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.13)
+project(jzintv)
+set(CMAKE_CXX_STANDARD 11)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+file(GLOB_RECURSE all_sources ${PROJECT_SOURCE_DIR}/src *.cpp *.c *.h )
+
+include_directories(
+        src
+)
+
+add_custom_target(mytest
+        ALL
+        COMMAND   make -C ${PROJECT_SOURCE_DIR}/src; -f Makefile.osx_framework B=${PROJECT_BINARY_DIR}
+        BYPRODUCTS jzintv
+        SOURCES ${all_sources} src/config.h)
+
