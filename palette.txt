@@ -1,0 +1,26 @@
+;   Format:
+;    -- 16 non-empty lines, one for each of the 16 INTV colors.
+;    -- Empty lines ignored.
+;    -- Anything after a ';' ignored
+;    -- Each line must either have:
+;        #rrggbb        HTML-style hexadecimal color triple
+;        dec dec dec    Three decimal numbers separated by spaces
+;    -- Lines must be less than 256 characters.
+; See: https://atariage.com/forums/topic/278354-gfx-palette-flag/
+
+#000000 ; black
+#002DFF ; blue
+#FF3D10 ; red
+#C9CFAB ; tan
+#386B3F ; dark green
+#00A756 ; green
+#FAEA50 ; yellow
+#FFFCFF ; white
+#BDACC8 ; gray
+#24B8FF ; cyan
+#FFB41F ; orange
+#546E00 ; brown
+#FF4E57 ; pink
+#A496FF ; light blue
+#75CC80 ; yellow-green
+#B51A58 ; purple
