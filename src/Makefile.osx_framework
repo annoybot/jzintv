@@ -65,18 +65,23 @@ RM = rm -f
  WARNXX += -Wold-style-cast
 
  LTO = -flto=4
- CC  = $(P) /usr/local/gcc-8.1/bin/gcc-8.1.0 $(LTO)
- CXX = $(P) /usr/local/gcc-8.1/bin/g++-8.1.0 $(LTO) -std=c++14 -fvisibility=hidden
+ CC  = $(P) /usr/local/gcc-8.1/bin/gcc $(LTO)
+ CXX = $(P) /usr/local/gcc-8.1/bin/g++ $(LTO) -std=c++14 -fvisibility=hidden
+ #CC  = $(P) /usr/local/gcc-8.1/bin/gcc-8.1.0 $(LTO)
+ #CXX = $(P) /usr/local/gcc-8.1/bin/g++-8.1.0 $(LTO) -std=c++14 -fvisibility=hidden
 #CC  = $(P) gcc-4.9.1 $(LTO)
 #CXX = $(P) g++-4.9.1 $(LTO) -std=c++14 -fvisibility=hidden
 #CC  = $(P) gcc
 #CXX = $(P) g++ -std=c++14 -fvisibility=hidden
 
+#Use the os x version of libtool, instead ofi the GNU version
+LIBTOOL=/usr/bin/libtool
+
 LIBCXX = -static-libstdc++ -static-libgcc
 
 DEF_FLAGS =  -DPLAT_MACOS
 
-#OPT_FLAGS = -ggdb 
+#OPT_FLAGS = -ggdb
 #OPT_FLAGS = -O
 #OPT_FLAGS = -O2 -ggdb
  OPT_FLAGS = -O3 -fomit-frame-pointer -msse3 -fstrict-aliasing
@@ -92,7 +97,8 @@ CXXFLAGS += $(OPT_FLAGS)  -I. -I.. $(DEF_FLAGS) $(EXTRA)
 #LFLAGS   = -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -L../lib
 #LFLAGS   = -isysroot /Developer/SDKs/MacOSX10.7.sdk -L../lib
 #LFLAGS    = -L../lib
-LFLAGS    = -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib
+#LFLAGS    = -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib
+#LFLAGS    = 
 
 SDLMAIN_CC = $(P) gcc $(ARCH)
 
@@ -146,13 +152,13 @@ $(PROG_NULL): $(OBJS) $(OBJS_NULL) svn_revision.$(O)
 
 #Library for use with the OS X GUI project.
 libjzintv_common.a : $(OBJS)
-	libtool -o libjzintv_common.a $(OBJS)
+	$(LIBTOOL) -o libjzintv_common.a $(OBJS)
 
 libjzintv_sdl.a : $(OBJS_SDL)
-	libtool -o libjzintv_sdl.a $(OBJS_SDL)
+	$(LIBTOOL) -o libjzintv_sdl.a $(OBJS_SDL)
 
 libjzintv_null.a : $(OBJS_NULL)
-	libtool -o libjzintv_null.a $(OBJS_NULL)
+	$(LIBTOOL) -o libjzintv_null.a $(OBJS_NULL)
 
 #Test program for libjzintv_common.a . If everything is OK, this program should
 #behave exactly like jzintv.
