@@ -103,6 +103,7 @@ LOCAL uint_8 gfx_stic_palette[32][3] =
     /*  This is an NTSC palette derived from a combination of screen cap    */
     /*  and eyeballing.  It's somewhat better in practice so far.           */
     /* -------------------------------------------------------------------- */
+#if 0
     { 0x00, 0x00, 0x00 },
     { 0x14, 0x38, 0xF7 },
     { 0xE3, 0x5B, 0x0E },
@@ -119,8 +120,10 @@ LOCAL uint_8 gfx_stic_palette[32][3] =
     { 0xD3, 0x83, 0xFF },
     { 0x48, 0xF6, 0x01 },
     { 0xB8, 0x11, 0x78 },
+#endif
+#if 1
+    // PN - I prefer this palette.  The new one seems over-saturated to me.
 
-#if 0
     /* -------------------------------------------------------------------- */
     /*  I generated these colors by directly eyeballing my television       */
     /*  while it was next to my computer monitor.  I then tweaked each      */
