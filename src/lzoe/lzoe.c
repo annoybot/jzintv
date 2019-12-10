@@ -203,7 +203,7 @@ char *lzoe_fgets ( char *buf, int size, LZFILE *f )
 
     if (f->f) {
         if (is_tty) {
-            
+
             char * rl_line = rl_gets();
 
             strncpy(buf, rl_line, size);
@@ -260,7 +260,7 @@ static char *line_read = (char *) NULL;
 /* Read a string, and return a pointer to it.  Returns NULL on EOF. */
 char *rl_gets() {
     // Disable Tab file completion
-    rl_bind_key('\t', rl_insert);
+    //l_bind_key('\t', rl_insert);
 
     /* If the buffer has already been allocated, return the memory
        to the free pool. */
