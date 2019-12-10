@@ -2,9 +2,16 @@
 ;
 #else
 
+#include <stdio.h>
+#include <unistd.h>	//for isatty()
+#include <readline/readline.h>
+#include <readline/history.h>
+
 #include "config.h"
 #include "minilzo/minilzo.h"
 #include "lzoe/lzoe.h"
+
+char *rl_gets();
 
 LZFILE            lzfile[MAX_LZOE_OPEN];
 LOCAL lzoe_directory    *directory    = NULL;
@@ -189,11 +196,24 @@ LZFILE *lzoe_fopen ( const char *fname, const char *mode )
 
 char *lzoe_fgets ( char *buf, int size, LZFILE *f )
 {
+    int is_tty = isatty(fileno(f->f));
+
     int  i, max, eol = 0;
     long ofs;
 
-    if (f->f)
-        return fgets( buf, size, f->f );
+    if (f->f) {
+        if (is_tty) {
+            
+            char * rl_line = rl_gets();
+
+            strncpy(buf, rl_line, size);
+            buf[size-1]='\0';
+
+            return buf;
+        } else {
+            return fgets(buf, size, f->f);
+        }
+    }
 
     max = f->l->info->orig_len - f->l->offset;
 
@@ -231,6 +251,32 @@ char *lzoe_fgets ( char *buf, int size, LZFILE *f )
     buf[i] = 0;
 
     return buf;
+}
+
+
+/* A static variable for holding the line. */
+static char *line_read = (char *) NULL;
+
+/* Read a string, and return a pointer to it.  Returns NULL on EOF. */
+char *rl_gets() {
+    // Disable Tab file completion
+    rl_bind_key('\t', rl_insert);
+
+    /* If the buffer has already been allocated, return the memory
+       to the free pool. */
+    if (line_read) {
+        free(line_read);
+        line_read = (char *) NULL;
+    }
+
+    /* Get a line from the user. */
+    line_read = readline("");
+
+    /* If the line has any text in it, save it on the history. */
+    if (line_read && *line_read)
+        add_history(line_read);
+
+    return (line_read);
 }
 
 int lzoe_fgetc( LZFILE *f )

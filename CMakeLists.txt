@@ -14,11 +14,12 @@ target_include_directories(jzintv
         PUBLIC
           src
           /Library/Frameworks/SDL.framework/Headers/
+          /usr/local/include
         )
 
 # IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
-link_directories(/Library/Frameworks/SDL.framework)
+link_directories(/Library/Frameworks/SDL.framework,  /usr/local/lib)
 
 find_library(sdl_framework
         NAMES SDL
@@ -26,4 +27,4 @@ find_library(sdl_framework
         REQUIRED)
 
 #target_link_libraries(jzintv PUBLIC -framework SDL -framework AppKit -framework Foundation objc)
-target_link_libraries(jzintv PUBLIC ${sdl_framework} "-framework AppKit" "-framework Foundation" objc)
+target_link_libraries(jzintv PUBLIC ${sdl_framework} "-framework AppKit" "-framework Foundation" objc readline history)
