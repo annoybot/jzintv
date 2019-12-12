@@ -206,8 +206,11 @@ char *lzoe_fgets ( char *buf, int size, LZFILE *f )
 
             char * rl_line = rl_gets();
 
-            strncpy(buf, rl_line, size);
-            buf[size-1]='\0';
+            if( rl_line ) {
+                strlcpy(buf, rl_line, size);
+            } else {
+                return NULL;
+            }
 
             return buf;
         } else {
