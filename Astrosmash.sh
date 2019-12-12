@@ -29,5 +29,6 @@ JS0B_SE     PD0L_J_SE
 JS0B_ESE    PD0L_J_ESE
 EOF
 
-bin/jzintv -d  -z1 -f1 -m1 --gfx-palette=palette.txt --kbdhackfile=/tmp/astrosmash-kb.txt rom/astrosmash\ -\ meteor\ \(1981\)\ \(mattel\).int 
+#bin/jzintv -d  -z1 -f1 -m1 --gfx-palette=palette.txt --kbdhackfile=/tmp/astrosmash-kb.txt rom/astrosmash\ -\ meteor\ \(1981\)\ \(mattel\).int 
+cmake-build-debug/jzintv -d  -z1 -f1 -m1 --gfx-palette=palette.txt --kbdhackfile=/tmp/astrosmash-kb.txt rom/astrosmash\ -\ meteor\ \(1981\)\ \(mattel\).int 
 

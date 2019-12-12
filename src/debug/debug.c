@@ -27,6 +27,7 @@
 #include "debug_tag.h"
 #include "debug_dasm1600.h"
 #include "debug/source.h"
+#include "cheat/cheat.h"
 
 #define HISTSIZE (0x10000)
 #define HISTMASK (HISTSIZE-1)
@@ -48,6 +49,10 @@ LOCAL uint_16 *debug_mempc   = NULL;
 LOCAL int      debug_rh_ptr = -1;
 LOCAL int      debug_histinit = 0;
 LOCAL void debug_write_reghist(const char *, periph_p, cp1600_t *);
+
+void poke(cp1600_t *cp, int arg, int arg2);
+void enter(cp1600_t *cp, int arg, int arg2);
+
 LOCAL symtab_t *debug_symtab;
 LOCAL int disasm_mode = 0;  /* -1 is disasm only, 0 is mixed, 1 is src only */
 
@@ -911,6 +916,43 @@ uint_32 debug_tk(periph_t *p, uint_32 len)
     debug->tot_instr = cp->tot_instr;
     req_ack = cp->req_ack_state;
 
+    if( debug->cheat_requested && debug->cheat_codes ) {
+        /*
+         * The value of the flag represents which of the eight cheat codes was requested.
+         * We have to subtract zero because cheat codes are indexed from 1, but the array is indexed from 0.
+         */
+        int cheat_index = debug->cheat_requested - 1;
+
+        debug->cheat_requested = 0;
+
+        if (cheat_index < debug->cheat_codes->count) {
+            cheat_code_t cheat_cmds = debug->cheat_codes->codes[cheat_index];
+
+            printf("Applying CHEAT%d\n", cheat_index+1);
+
+            if (*cheat_cmds) {
+                for (int i = 0; *(cheat_cmds + i); i++) {
+                    cheat_code_cmd_t *cheat_cmd = (cheat_code_cmd_t *) *(cheat_cmds + i);
+
+                    printf("%c\t$%04lx\t%02lx\n", cheat_cmd->cmd, cheat_cmd->arg1, cheat_cmd->arg2);
+
+                    switch (cheat_cmd->cmd) {
+                        case 'P':
+                            poke(cp, cheat_cmd->arg1, cheat_cmd->arg2);
+                            break;
+                        case 'E':
+                            enter(cp, cheat_cmd->arg1, cheat_cmd->arg2);
+                            break;
+                        default:
+                            printf("Unknown cmd '%c' in cheat code CHEAT%d. Skipping.\n", cheat_cmd->cmd, cheat_index+1);
+                    }
+                }
+            }
+        } else {
+            printf("Cheat code CHEAT%d not found. Did you supply the --cheat cmdline option?\n", cheat_index+1);
+        }
+    }
+
     /* -------------------------------------------------------------------- */
     /*  If we're keeping a trace history, update it now.                    */
     /* -------------------------------------------------------------------- */
@@ -1617,9 +1659,7 @@ next_cmd:
             {
                 if (arg >= 0)
                 {
-                    periph_poke((periph_p)cp->periph.bus,
-                                (periph_p)cp, arg, arg2);
-                    cp1600_invalidate(cp, arg, arg);
+                    poke(cp, arg, arg2);
                 }
                 else
                     jzp_printf("invalid args.  P addr data\n");
@@ -1630,9 +1670,7 @@ next_cmd:
             {
                 if (arg >= 0)
                 {
-                    periph_write((periph_p)cp->periph.bus,
-                                 (periph_p)cp, arg, arg2);
-                    cp1600_invalidate(cp, arg, arg);
+                    enter(cp, arg, arg2);
                 }
                 else
                     jzp_printf("invalid args.  E addr data\n");
@@ -1872,6 +1910,16 @@ next_cmd:
     }
 
     return len;
+}
+
+void enter(cp1600_t *cp, int arg, int arg2) {
+    periph_write((periph_p)cp->periph.bus, (periph_p)cp, arg, arg2);
+    cp1600_invalidate(cp, arg, arg);
+}
+
+void poke(cp1600_t *cp, int arg, int arg2) {
+    periph_poke((periph_p)cp->periph.bus, (periph_p)cp, arg, arg2);
+    cp1600_invalidate(cp, arg, arg);
 }
 
 
@@ -2524,7 +2572,7 @@ LOCAL void debug_dtor(periph_p p)
  */
 int debug_init(debug_t *debug, cp1600_t *cp1600, speed_t *speed, gfx_t *gfx,
                stic_t *stic, const char *symtbl, uint_8 *vid_enable,
-               const char *script)
+               cheat_code_list_t* cheat_codes, const char *script)
 {
     static uint_8   dummy  = 0;
 
@@ -2551,6 +2599,8 @@ int debug_init(debug_t *debug, cp1600_t *cp1600, speed_t *speed, gfx_t *gfx,
 
     debug->vid_enable     = vid_enable     ? vid_enable     : &dummy;
     debug->stic           = stic;
+
+    debug->cheat_codes = cheat_codes;
 
     debug->filestk[0] = lzoe_filep( stdin );
 

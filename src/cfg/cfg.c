@@ -52,6 +52,7 @@
 #include "locutus/locutus_adapt.h"
 #include "mapping.h"
 #include "cfg.h"
+#include "cheat/cheat.h"
 
 #include <errno.h>
 
@@ -362,7 +363,7 @@ enum
     FLAG_GFX_BORD_X,    FLAG_GFX_BORD_Y,   FLAG_GUI_MODE,     FLAG_RAND_MEM,
     FLAG_START_DELAY,   FLAG_DBG_SCRIPT,   FLAG_DBG_SRCMAP,   FLAG_FILE_IO,
     FLAG_ENABLE_MOUSE,  FLAG_PRESCALE,     FLAG_JLP_SAVEGAME, FLAG_AVI_RATE,
-    FLAG_LOCUTUS,       FLAG_ECS_TAPE,     FLAG_ECS_PRINTER
+    FLAG_LOCUTUS,       FLAG_ECS_TAPE,     FLAG_ECS_PRINTER,  FLAG_CHEAT
 };
 
 struct option cfg_longopt[] =
@@ -484,6 +485,7 @@ struct option cfg_longopt[] =
 
     {   "ecs-tape",     1,      NULL,       FLAG_ECS_TAPE       },
     {   "ecs-printer",  1,      NULL,       FLAG_ECS_PRINTER    },
+    {   "cheat",        1,      NULL,       FLAG_CHEAT          },
 
     {   NULL,           0,      NULL,       0                   }
 };
@@ -531,6 +533,10 @@ void cfg_init(cfg_t *cfg, int argc, char * argv_orig[])
     char       *disp_res = NULL;
     const char *err_msg  = NULL;
     int locutus          = 0;
+
+    //Allocate an empty list of cheat codes. It will be added to the debug object in debug_init().
+    cheat_code_list_t*   cheat_codes = init_cheat_list();
+
 #ifndef NO_SERIALIZER
     ser_hier_t *ser_cfg;
 #endif
@@ -879,7 +885,11 @@ void cfg_init(cfg_t *cfg, int argc, char * argv_orig[])
                 break;
             }
 
-
+            case FLAG_CHEAT: {
+                //Parse the cheat code and append it ot the list of cheat codes.
+                parse_cheat_str(cheat_codes, optarg);
+                break;
+            }
             default:
             {
                 fprintf(stderr, "Unrecognized option: '%s'\n"
@@ -1519,7 +1529,7 @@ skip_ecs:;
     if (cfg->debugging &&
         debug_init(&cfg->debug, &cfg->cp1600,
                    cfg->rate_ctl > 0.0 ? &cfg->speed : NULL, &cfg->gfx,
-                   &cfg->stic, debug_symtbl, &cfg->stic.vid_enable,
+                   &cfg->stic, debug_symtbl, &cfg->stic.vid_enable, cheat_codes,
                    debug_script))
     {
         fprintf(stderr, "ERROR:  Failed to initialize debugger\n");

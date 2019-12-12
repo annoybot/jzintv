@@ -12,6 +12,8 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
+#include <cheat/cheat.h>
+
 /* Forward declarations */
 struct cp1600_t;
 struct speed_t;
@@ -41,6 +43,8 @@ typedef struct debug_t
     LZFILE          *filestk[DEBUG_MAX_FILESTK];
     int             filestk_depth;
     int             symb_addr_format;
+    int             cheat_requested;
+    cheat_code_list_t* cheat_codes;
 } debug_t;
 
 /*
@@ -96,6 +100,7 @@ int debug_init(debug_t *debug,
                struct stic_t *stic,
                const char *symtbl,
                uint_8 *vid_enable,
+               cheat_code_list_t*   cheat_codes,
                const char *script);
 
 /* ======================================================================== */

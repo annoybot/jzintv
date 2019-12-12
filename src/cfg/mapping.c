@@ -79,6 +79,16 @@ cfg_evtact_t  cfg_event_action[] =
     { "HIDE",       V(gfx.hidden        ),  { 0,   1   },   { 0,   1   } },
     { "WTOG",       V(gfx.toggle        ),  { ~0U, ~0U },   { 1,   0   } },
     { "BREAK",      V(debug.step_count  ),  { ~0U, 0   },   { 0,   0   } },
+
+    { "CHEAT1",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   1   } },
+    { "CHEAT2",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   2   } },
+    { "CHEAT3",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   3   } },
+    { "CHEAT4",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   4   } },
+    { "CHEAT5",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   5   } },
+    { "CHEAT6",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   6   } },
+    { "CHEAT7",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   7   } },
+    { "CHEAT8",      V(debug.cheat_requested  ),  { ~0U, 0   },   { 0,   8   } },
+
     { "KBD0",       V(event.change_kbd  ),  { ~0U, 0   },   { 0,   1   } },
     { "KBD1",       V(event.change_kbd  ),  { ~0U, 0   },   { 0,   2   } },
     { "KBD2",       V(event.change_kbd  ),  { ~0U, 0   },   { 0,   3   } },

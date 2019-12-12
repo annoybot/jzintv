@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 variable_watch(CMAKE_BUILD_TYPE)
 
-add_executable(jzintv)
+add_executable(jzintv src/cheat/cheat.c)
 
 add_subdirectory(src)
 
@@ -27,4 +27,13 @@ find_library(sdl_framework
         REQUIRED)
 
 #target_link_libraries(jzintv PUBLIC -framework SDL -framework AppKit -framework Foundation objc)
-target_link_libraries(jzintv PUBLIC ${sdl_framework} "-framework AppKit" "-framework Foundation" objc readline history)
+target_link_libraries(jzintv
+        PUBLIC
+          ${sdl_framework}
+          "-framework AppKit"
+          "-framework Foundation"
+          objc
+          readline
+          history
+          pcre2-8.a
+        )
